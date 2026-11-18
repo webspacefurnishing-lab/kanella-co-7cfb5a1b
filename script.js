@@ -21,6 +21,7 @@
     const result = document.getElementById('event-result');
     form.addEventListener('submit', event => {
       event.preventDefault();
+      if (!form.reportValidity()) return;
       const data = new FormData(form);
       const lines = [String(data.get('occasion'))];
       if (data.get('date')) lines.push('Preferred date: ' + formatDate(String(data.get('date'))));
@@ -31,6 +32,7 @@
       reveal(result);
     });
     form.addEventListener('input', () => { result.hidden = true; });
+    form.addEventListener('change', () => { result.hidden = true; });
   }
   const bookingForm = document.getElementById('booking-form');
   if (bookingForm) {
@@ -44,6 +46,7 @@
     setMinimumDate();
     bookingForm.addEventListener('focusin', setMinimumDate);
     bookingForm.addEventListener('input', () => { result.hidden = true; });
+    bookingForm.addEventListener('change', () => { result.hidden = true; });
     bookingForm.addEventListener('submit', event => {
       event.preventDefault();
       setMinimumDate();

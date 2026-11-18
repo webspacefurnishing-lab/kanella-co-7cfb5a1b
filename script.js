@@ -1,41 +1,4 @@
 (() => {
-  const header = document.querySelector('.header');
-  const menuToggle = header && header.querySelector('.menu-toggle');
-  const navigation = header && header.querySelector('#site-nav');
-  if (header && menuToggle && navigation) {
-    const mobile = window.matchMedia('(max-width: 600px)');
-    const setMenuOpen = open => {
-      header.classList.toggle('is-menu-open', open);
-      menuToggle.setAttribute('aria-expanded', String(open));
-      menuToggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
-    };
-    menuToggle.addEventListener('click', () => {
-      setMenuOpen(menuToggle.getAttribute('aria-expanded') !== 'true');
-    });
-    navigation.addEventListener('click', event => {
-      if (mobile.matches && event.target.closest('a')) setMenuOpen(false);
-    });
-    document.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && mobile.matches && menuToggle.getAttribute('aria-expanded') === 'true') {
-        event.preventDefault();
-        setMenuOpen(false);
-        menuToggle.focus({ preventScroll: true });
-      }
-    });
-    document.addEventListener('click', event => {
-      if (mobile.matches && !header.contains(event.target)) setMenuOpen(false);
-    });
-    const resetMenu = () => {
-      const focused = document.activeElement;
-      setMenuOpen(false);
-      if (mobile.matches && navigation.contains(focused)) menuToggle.focus({ preventScroll: true });
-      if (!mobile.matches && focused === menuToggle) navigation.querySelector('a').focus({ preventScroll: true });
-    };
-    if (typeof mobile.addEventListener === 'function') mobile.addEventListener('change', resetMenu);
-    else mobile.addListener(resetMenu);
-    menuToggle.hidden = false;
-    header.classList.add('nav-enhanced');
-  }
   const formatDate = value => new Date(value + 'T12:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   const reveal = element => {
     element.hidden = false;

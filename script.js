@@ -8,17 +8,26 @@
   const dialog = document.getElementById('event-dialog');
   const opener = document.querySelector('[data-open-event]');
   if (dialog && opener && typeof dialog.showModal === 'function') {
+    const closeButton = dialog.querySelector('.close-dialog');
+    const form = document.getElementById('event-form');
+    const result = document.getElementById('event-result');
     opener.hidden = false;
-    opener.addEventListener('click', () => dialog.showModal());
-    dialog.querySelector('.close-dialog').addEventListener('click', () => dialog.close());
+    opener.addEventListener('click', () => {
+      dialog.showModal();
+      document.documentElement.classList.add('dialog-open');
+      dialog.scrollTop = 0;
+      closeButton.focus({ preventScroll: true });
+    });
+    closeButton.addEventListener('click', () => dialog.close());
     dialog.addEventListener('click', event => {
       if (event.target !== dialog) return;
       const bounds = dialog.getBoundingClientRect();
       if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close();
     });
-    dialog.addEventListener('close', () => opener.focus());
-    const form = document.getElementById('event-form');
-    const result = document.getElementById('event-result');
+    dialog.addEventListener('close', () => {
+      document.documentElement.classList.remove('dialog-open');
+      opener.focus({ preventScroll: true });
+    });
     form.addEventListener('submit', event => {
       event.preventDefault();
       if (!form.reportValidity()) return;
@@ -31,8 +40,9 @@
       result.querySelector('.event-summary').textContent = lines.join('\n');
       reveal(result);
     });
-    form.addEventListener('input', () => { result.hidden = true; });
-    form.addEventListener('change', () => { result.hidden = true; });
+    const hideEventResult = () => { result.hidden = true; };
+    form.addEventListener('input', hideEventResult);
+    form.addEventListener('change', hideEventResult);
   }
   const bookingForm = document.getElementById('booking-form');
   if (bookingForm) {
@@ -45,8 +55,9 @@
     };
     setMinimumDate();
     bookingForm.addEventListener('focusin', setMinimumDate);
-    bookingForm.addEventListener('input', () => { result.hidden = true; });
-    bookingForm.addEventListener('change', () => { result.hidden = true; });
+    const hideBookingResult = () => { result.hidden = true; };
+    bookingForm.addEventListener('input', hideBookingResult);
+    bookingForm.addEventListener('change', hideBookingResult);
     bookingForm.addEventListener('submit', event => {
       event.preventDefault();
       setMinimumDate();
@@ -64,7 +75,8 @@
     });
     document.getElementById('edit-visit').addEventListener('click', () => {
       result.hidden = true;
-      dateInput.focus();
+      dateInput.focus({ preventScroll: true });
+      dateInput.scrollIntoView({ block: 'center', behavior: 'auto' });
     });
     bookingForm.hidden = false;
   }
